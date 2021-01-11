@@ -44,7 +44,7 @@ def access_test(path):
         response = requests.get(path, headers={ 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0' }, timeout=2.5)        
         sc = response.status_code
         if sc != 403 and sc != 404 and sc != 400:
-            print("\n{} - [{}] with {}".format(response.url, response.status_code, rtype))
+            print("\n{} - [{}]".format(path, response.status_code))
             return
         if response.status_code not in response_codes:
             response_codes[response.status_code] = 1
