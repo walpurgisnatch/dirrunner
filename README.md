@@ -7,7 +7,7 @@ python3 dirrunner.py -u https://example/com/someurl
 ```
 
 ### Depth
-You can set the amount of subdirectories to dig in with the `-d` flag. 
+Amount of subdirectories to dig in can be specified with the `-d` flag. 
 Default = 12.
 ```
 python3 dirrunner.py -u https://example/com/someurl -d 8
@@ -15,7 +15,7 @@ python3 dirrunner.py -u https://example/com/someurl -d 8
 
 ### File
 To specify file to try to access, use `-f` flag. 
-Default - "/etc/passwd"
+By default script will try to access list of common files.
 ```
 python3 dirrunner.py -u https://example/com/someurl -f /var/www/html/index.html
 ```
