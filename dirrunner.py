@@ -6,6 +6,7 @@ traversal = ["../", "%2e%2e/", ".%2e/", "%2e./", "%252e%252e/", "%252e%252e\\", 
 absolute_path = ["/var/www/html/index.html", "/var/www/html/get.php", "/var/www/html/admin/get.inc", "/etc/passwd", "/etc/shadow"]
 points = ["etc/passwd", "etc/shadow", "var/www/html/index.html"]
 response_codes = {}
+to_ignore = [400, 403, 404]
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -72,7 +73,7 @@ def access_test(path):
     try:
         response = requests.get(path, headers={ 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0' }, timeout=2.5)        
         sc = response.status_code
-        if sc != 403 and sc != 404 and sc != 400:
+        if sc not in to_ignore:
             print("\n{} - [{}]".format(path, response.status_code))
             return
         if response.status_code not in response_codes:
